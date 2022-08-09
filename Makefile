@@ -23,7 +23,7 @@ tcp-testserver:
 	$(NETCAT) -tlnp 8126
 
 udp-testserver:
-	$(NETCAT) -ulnp  8125
+	$(NETCAT) -ulnp 8125
 
 tcp-integration:
 	$(PHP_BIN) tests/integration/tcp-test.php

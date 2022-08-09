@@ -15,7 +15,7 @@ trait StatsdAwareTrait
     /**
      * Sets the StatsD client.
      */
-    public function setStatsdClient(Client $client)
+    public function setStatsdClient(Client $client): void
     {
         $this->statsd = $client;
     }
