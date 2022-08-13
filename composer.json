@@ -36,6 +36,6 @@
         }
     },
     "replace": {
-        "domnikl/statsd": "self.version"
+        "domnikl/statsd": "<=3.0.2"
     }
 }
