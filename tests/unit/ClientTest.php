@@ -58,32 +58,42 @@ class ClientTest extends TestCase
         );
     }
 
+    public function sampleRateData()
+    {
+        return [
+            [0.9, 1, '0.9'],
+            [0.9, 0.5, '0.5'],
+        ];
+    }
+
     /**
+     * @dataProvider sampleRateData
      * @group sampling
      */
-    public function testCountWithSamplingRate()
+    public function testCountWithSamplingRate(float $globalSampleRate, float $sampleRate, string $expectedSampleRate)
     {
-        $client = new Client($this->connection, 'test', 9 / 10);
+        $client = new Client($this->connection, 'test', $globalSampleRate);
         for ($i = 0; $i < 10; $i++) {
-            $client->count('foo.baz', 100, 1);
+            $client->count('foo.baz', 100, $sampleRate);
         }
         $this->assertEquals(
-            'test.foo.baz:100|c|@0.9',
+            "test.foo.baz:100|c|@{$expectedSampleRate}",
             $this->connection->getLastMessage()
         );
     }
 
     /**
+     * @dataProvider sampleRateData
      * @group sampling
      */
-    public function testCountWithSamplingRateAndTags()
+    public function testCountWithSamplingRateAndTags(float $globalSampleRate, float $sampleRate, string $expectedSampleRate)
     {
-        $client = new Client($this->connection, 'test', 9 / 10);
+        $client = new Client($this->connection, 'test', $globalSampleRate);
         for ($i = 0; $i < 10; $i++) {
-            $client->count('foo.baz', 100, 1, ['tag' => 'value']);
+            $client->count('foo.baz', 100, $sampleRate, ['tag' => 'value']);
         }
         $this->assertEquals(
-            'test.foo.baz:100|c|@0.9|#tag:value',
+            "test.foo.baz:100|c|@{$expectedSampleRate}|#tag:value",
             $this->connection->getLastMessage()
         );
     }
@@ -98,31 +108,33 @@ class ClientTest extends TestCase
     }
 
     /**
+     * @dataProvider sampleRateData
      * @group sampling
      */
-    public function testIncrementWithSamplingRate()
+    public function testIncrementWithSamplingRate(float $globalSampleRate, float $sampleRate, string $expectedSampleRate)
     {
-        $client = new Client($this->connection, 'test', 0.9);
+        $client = new Client($this->connection, 'test', $globalSampleRate);
         for ($i = 0; $i < 10; $i++) {
-            $client->increment('foo.baz', 1);
+            $client->increment('foo.baz', $sampleRate);
         }
         $this->assertEquals(
-            'test.foo.baz:1|c|@0.9',
+            "test.foo.baz:1|c|@{$expectedSampleRate}",
             $this->connection->getLastMessage()
         );
     }
 
     /**
+     * @dataProvider sampleRateData
      * @group sampling
      */
-    public function testIncrementWithSamplingRateAndTags()
+    public function testIncrementWithSamplingRateAndTags(float $globalSampleRate, float $sampleRate, string $expectedSampleRate)
     {
-        $client = new Client($this->connection, 'test', 0.9);
+        $client = new Client($this->connection, 'test', $globalSampleRate);
         for ($i = 0; $i < 10; $i++) {
-            $client->increment('foo.baz', 1, ['tag' => 'value']);
+            $client->increment('foo.baz', $sampleRate, ['tag' => 'value']);
         }
         $this->assertEquals(
-            'test.foo.baz:1|c|@0.9|#tag:value',
+            "test.foo.baz:1|c|@{$expectedSampleRate}|#tag:value",
             $this->connection->getLastMessage()
         );
     }
@@ -137,31 +149,33 @@ class ClientTest extends TestCase
     }
 
     /**
+     * @dataProvider sampleRateData
      * @group sampling
      */
-    public function testDecrementWithSamplingRate()
+    public function testDecrementWithSamplingRate(float $globalSampleRate, float $sampleRate, string $expectedSampleRate)
     {
-        $client = new Client($this->connection, 'test', 0.9);
+        $client = new Client($this->connection, 'test', $globalSampleRate);
         for ($i = 0; $i < 10; $i++) {
-            $client->decrement('foo.baz', 1);
+            $client->decrement('foo.baz', $sampleRate);
         }
         $this->assertEquals(
-            'test.foo.baz:-1|c|@0.9',
+            "test.foo.baz:-1|c|@{$expectedSampleRate}",
             $this->connection->getLastMessage()
         );
     }
 
     /**
+     * @dataProvider sampleRateData
      * @group sampling
      */
-    public function testDecrementWithSamplingRateAndTags()
+    public function testDecrementWithSamplingRateAndTags(float $globalSampleRate, float $sampleRate, string $expectedSampleRate)
     {
-        $client = new Client($this->connection, 'test', 0.9);
+        $client = new Client($this->connection, 'test', $globalSampleRate);
         for ($i = 0; $i < 10; $i++) {
-            $client->decrement('foo.baz', 1, ['tag' => 'value']);
+            $client->decrement('foo.baz', $sampleRate, ['tag' => 'value']);
         }
         $this->assertEquals(
-            'test.foo.baz:-1|c|@0.9|#tag:value',
+            "test.foo.baz:-1|c|@{$expectedSampleRate}|#tag:value",
             $this->connection->getLastMessage()
         );
     }
@@ -177,16 +191,17 @@ class ClientTest extends TestCase
 
 
     /**
+     * @dataProvider sampleRateData
      * @group sampling
      */
-    public function testTimingWithSamplingRate()
+    public function testTimingWithSamplingRate(float $globalSampleRate, float $sampleRate, string $expectedSampleRate)
     {
-        $client = new Client($this->connection, 'test', 0.9);
+        $client = new Client($this->connection, 'test', $globalSampleRate);
         for ($i = 0; $i < 10; $i++) {
-            $client->timing('foo.baz', 2000, 1);
+            $client->timing('foo.baz', 2000, $sampleRate);
         }
         $this->assertEquals(
-            'test.foo.baz:2000|ms|@0.9',
+            "test.foo.baz:2000|ms|@{$expectedSampleRate}",
             $this->connection->getLastMessage()
         );
     }
@@ -218,20 +233,21 @@ class ClientTest extends TestCase
     }
 
     /**
+     * @dataProvider sampleRateData
      * @group sampling
      */
-    public function testStartEndTimingWithSamplingRate()
+    public function testStartEndTimingWithSamplingRate(float $globalSampleRate, float $sampleRate, string $expectedSampleRate)
     {
-        $client = new Client($this->connection, 'test', 0.9);
+        $client = new Client($this->connection, 'test', $globalSampleRate);
         for ($i = 0; $i < 10; $i++) {
             $client->startTiming('foo.baz');
             usleep(10000);
-            $client->endTiming('foo.baz');
+            $client->endTiming('foo.baz', $sampleRate);
         }
 
         // ranges between 1000 and 1001ms
         $this->assertMatchesRegularExpression(
-            '/^test\.foo\.baz:1[0-9](.[0-9]+)?\|ms\|@0.9$/',
+            "/^test\.foo\.baz:1[0-9](.[0-9]+)?\|ms\|@{$expectedSampleRate}$/",
             $this->connection->getLastMessage()
         );
     }

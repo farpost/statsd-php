@@ -255,7 +255,7 @@ class Client
     {
         // override sampleRate if all metrics should be sampled
         if ($this->sampleRateAllMetrics < 1) {
-            $sampleRate = $this->sampleRateAllMetrics;
+            $sampleRate = min($sampleRate, $this->sampleRateAllMetrics);
         }
 
         if ($sampleRate < 1 && mt_rand() / mt_getrandmax() > $sampleRate) {

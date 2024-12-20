@@ -40,6 +40,11 @@ When establishing the connection to statsd and sending metrics, errors will be s
 If you run statsd in TCP mode, there is also a `\Domnikl\Statsd\Connection\TcpSocket` adapter that works like the `UdpSocket` except that it throws a `\Domnikl\Statsd\Connection\TcpSocketException` if no connection could be established.
 Please consider that unlike UDP, TCP is used for reliable networks and therefor exceptions (and errors) will not be suppressed in TCP mode.
 
+### Sampling Rate
+
+You can set global sampling rate when constructing instance of `Client`. If a metric call passes lower sampling rate than the global one, it would be
+used instead. However if a metric call passes sampling rate higher than the global one, that would be ignored in favor of global sampling rate.
+
 ### [Timings](https://github.com/etsy/statsd/blob/master/docs/metric_types.md#timing)
 
 ```php
@@ -71,9 +76,9 @@ $statsd->memory('foo.memory_peak_usage');
 
 ### [Gauges](https://github.com/etsy/statsd/blob/master/docs/metric_types.md#gauges)
 
-statsd supports gauges, arbitrary values which can be recorded. 
+statsd supports gauges, arbitrary values which can be recorded.
 
-This method accepts both absolute (3) and delta (+11) values. 
+This method accepts both absolute (3) and delta (+11) values.
 
 *NOTE:* Negative values are treated as delta values, not absolute.
 
@@ -82,9 +87,9 @@ This method accepts both absolute (3) and delta (+11) values.
 // Absolute value
 $statsd->gauge('foobar', 3);
 
-// Pass delta values as a string. 
+// Pass delta values as a string.
 // Accepts both positive (+11) and negative (-4) delta values.
-$statsd->gauge('foobar', '+11'); 
+$statsd->gauge('foobar', '+11');
 ```
 
 ### [Sets](https://github.com/etsy/statsd/blob/master/docs/metric_types.md#sets)
@@ -99,7 +104,7 @@ $statsd->set('userId', 1234);
 ### disabling sending of metrics
 
 To disable sending any metrics to the statsd server, you can use the `Domnikl\Statsd\Connection\Blackhole` connection
- class instead of the default socket abstraction. This may be incredibly useful for feature flags. Another options is
+class instead of the default socket abstraction. This may be incredibly useful for feature flags. Another options is
 to use `Domnikl\Statsd\Connection\InMemory` connection class, that will collect your messages but won't actually send them.
 
 ## StatsdAwareInterface
@@ -121,6 +126,7 @@ services:
     arguments:
       $connection: '@app.statsd_connection'
       $namespace: '<namespace>'
+      $sampleRateAllMetrics: '0.1' # set global sample rate of 10%
 
   app.statsd_connection:
     class: Domnikl\Statsd\Connection\UdpSocket
