@@ -1,5 +1,5 @@
 {
-    "name": "slickdeals/statsd",
+    "name": "farpost/statsd",
     "type": "library",
     "description": "a PHP client for statsd",
     "keywords": [
@@ -9,7 +9,7 @@
         "metrics",
         "udp"
     ],
-    "homepage": "https://github.com/Slickdeals/statsd-php",
+    "homepage": "https://github.com/farpost/statsd-php",
     "license": "MIT",
     "authors": [
         {
